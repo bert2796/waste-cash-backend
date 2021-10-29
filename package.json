@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "nest build",
-    "start": "node dist/main",
+    "start": "ts-node dist/src/main.js",
     "dev": "nodemon --config nodemon.json",
     "pretypeorm": "(rm ormconfig.json || :) && ts-node -r tsconfig-paths/register scripts/write-type-orm-config.ts",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
