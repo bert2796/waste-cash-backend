@@ -9,6 +9,7 @@ import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { HealthModule } from './health/health.module';
 import { ProductModule } from './product/product.module';
+import { ProductOfferModule } from './productOffer/productOffer.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -24,6 +25,7 @@ import { UserModule } from './user/user.module';
     ConfigModule,
     HealthModule,
     ProductModule,
+    ProductOfferModule,
     UserModule,
   ],
   providers: [
