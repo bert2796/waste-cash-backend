@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
+import { EventModule } from './event/event.module';
 import { HealthModule } from './health/health.module';
 import { ProductModule } from './product/product.module';
 import { ProductOfferModule } from './productOffer/productOffer.module';
@@ -23,6 +24,7 @@ import { UserModule } from './user/user.module';
     AuthModule,
     CategoryModule,
     ConfigModule,
+    EventModule,
     HealthModule,
     ProductModule,
     ProductOfferModule,
