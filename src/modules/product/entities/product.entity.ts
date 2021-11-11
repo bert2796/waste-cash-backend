@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
   JoinColumn,
 } from 'typeorm';
 
@@ -12,6 +13,7 @@ import { ProductStatus } from '../../../common/constant';
 import { IProduct } from '../interfaces';
 import { Category } from '../../category/entities/category.entity';
 import { User } from '../../user/entities/user.entity';
+import { ProductOffer } from '../../productOffer/entities/productOffer.entity';
 
 export const publicFields: string[] = [
   'id',
@@ -64,4 +66,7 @@ export class Product implements IProduct {
   @ManyToOne(() => User)
   @JoinColumn()
   bidder: User;
+
+  @OneToMany(() => ProductOffer, (offer) => offer.product)
+  offers: ProductOffer[];
 }

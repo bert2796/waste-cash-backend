@@ -1,8 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { CreateProductInputDto } from '../dtos';
+import { CreateProductOfferInputDto } from '../../productOffer/dtos';
 import { CategoryService } from '../../category/services/category.service';
+import { ProductOfferService } from '../../productOffer/services/productOffer.service';
 import { User } from '../../user/entities/user.entity';
+import { ProductOffer } from '../../productOffer/entities/productOffer.entity';
 import { Product } from '../entities/product.entity';
 import { ProductRepository } from '../repositories/product.repository';
 import { randomString, slugify } from '../../../common/utils';
@@ -11,9 +14,11 @@ import { randomString, slugify } from '../../../common/utils';
 export class ProductService {
   constructor(
     private readonly productRepository: ProductRepository,
-    private readonly categoryService: CategoryService
+    private readonly categoryService: CategoryService,
+    private readonly productOfferService: ProductOfferService
   ) {}
 
+  // Products API
   async createProduct(input: CreateProductInputDto, owner: User): Promise<Product> {
     const { category: categoryName, description, name, price, status } = input;
 
@@ -40,11 +45,25 @@ export class ProductService {
   }
 
   async getProduct(id: number): Promise<Product> {
-    const product = await this.productRepository.findOne(id, { relations: ['category', 'owner', 'bidder'] });
+    const product = await this.productRepository.findOne(id, {
+      relations: ['category', 'owner', 'bidder', 'offers', 'offers.user'],
+    });
     if (!product) {
       throw new BadRequestException('Product does not exist.');
     }
 
     return product;
+  }
+
+  // Product Offers API
+  async createProductOffer(productId: number, input: CreateProductOfferInputDto, user: User): Promise<ProductOffer> {
+    const product = await this.productRepository.findOne(productId);
+    if (!product) {
+      throw new BadRequestException('Product does not exist.');
+    }
+
+    const productOffer = await this.productOfferService.createProductOffer(user, product, input);
+
+    return productOffer;
   }
 }
