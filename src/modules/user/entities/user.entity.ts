@@ -11,6 +11,9 @@ export class User implements IUser {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'varchar', length: 128, nullable: true })
+  junkShopName: string;
+
   @Column({ type: 'varchar', length: 128 })
   firstName: string;
 
