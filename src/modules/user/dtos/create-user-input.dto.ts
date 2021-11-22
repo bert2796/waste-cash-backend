@@ -1,8 +1,13 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString, ValidateIf } from 'class-validator';
 
 import { UserRoles } from '../../../common/constant';
 
 export class CreateUserInputDto {
+  @ValidateIf((o) => o.role === UserRoles.SHOP)
+  @IsNotEmpty()
+  @IsString()
+  junkShopName: string;
+
   @IsNotEmpty()
   @IsString()
   firstName: string;

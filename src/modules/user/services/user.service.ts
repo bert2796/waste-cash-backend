@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { UserRoles } from '../../../common/constant';
 import { CreateUserInputDto } from '../dtos';
 import { User } from '../entities/user.entity';
 import { UserRepository } from '../repositories/user.repository';
@@ -9,13 +10,14 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async createUser(input: CreateUserInputDto): Promise<User> {
-    const { firstName, lastName, phone, email, username, password, role, address, city, zip } = input;
+    const { junkShopName, firstName, lastName, phone, email, username, password, role, address, city, zip } = input;
     let user = await this.userRepository.findOneByEmailOrUsername(email, username);
     if (user) {
       throw new Error('User is already existing.');
     }
 
     user = new User();
+    user.junkShopName = role === UserRoles.SHOP ? junkShopName : null;
     user.firstName = firstName;
     user.lastName = lastName;
     user.phone = phone;
