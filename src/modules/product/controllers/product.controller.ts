@@ -1,4 +1,4 @@
-import { Controller, Get, Post, HttpCode, HttpStatus, Param, Body, Req, Query } from '@nestjs/common';
+import { Controller, Get, Post, Patch, HttpCode, HttpStatus, Param, Body, Req, Query } from '@nestjs/common';
 
 import { Authorize } from '../../../common/decorators/authorize.decorator';
 import { UserRoles } from '../../../common/constant';
@@ -56,5 +56,19 @@ export class ProductController {
     const { user } = req;
 
     return await this.productService.createProductOffer(+id, input, user);
+  }
+
+  @Patch('/:productId/offers/:productOfferId')
+  @HttpCode(HttpStatus.OK)
+  @Authorize([UserRoles.SELLER])
+  async updatedProductOffer(
+    @Param('productId') productId: string,
+    @Param('productOfferId') productOfferId: string,
+    @Body() input: Partial<ProductOffer>,
+    @Req() req: { user: User }
+  ): Promise<ProductOffer> {
+    const { user } = req;
+
+    return await this.productService.updateProductOffer(+productId, +productOfferId, input, user);
   }
 }

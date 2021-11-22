@@ -23,4 +23,22 @@ export class ProductOfferService {
 
     return await this.productOfferRepository.save(productOffer);
   }
+
+  async updateProductOffer(productOfferId: number, input: Partial<ProductOffer>): Promise<ProductOffer> {
+    const productOffer = await this.getProductOffer(productOfferId);
+    productOffer.status = input.status;
+
+    return await this.productOfferRepository.save(productOffer, { reload: true });
+  }
+
+  async getProductOffer(productOfferId: number): Promise<ProductOffer> {
+    const productOffer = await this.productOfferRepository.findOne(productOfferId, {
+      relations: ['user'],
+    });
+    if (!productOffer) {
+      throw new BadRequestException('Offer does not exist.');
+    }
+
+    return productOffer;
+  }
 }
