@@ -20,7 +20,7 @@ export class ProductController {
   async createProduct(@Body() input: CreateProductInputDto, @Req() req: { user: User }): Promise<Product> {
     const { user } = req;
 
-    return await this.productService.createProduct(input, user);
+    return await this.productService.createProduct({ input, owner: user });
   }
 
   @Get('/')
@@ -55,7 +55,7 @@ export class ProductController {
   ): Promise<ProductOffer> {
     const { user } = req;
 
-    return await this.productService.createProductOffer(+id, input, user);
+    return await this.productService.createProductOffer({ productId: +id, input, user });
   }
 
   @Patch('/:productId/offers/:productOfferId')
@@ -69,6 +69,11 @@ export class ProductController {
   ): Promise<ProductOffer> {
     const { user } = req;
 
-    return await this.productService.updateProductOffer(+productId, +productOfferId, input, user);
+    return await this.productService.updateProductOffer({
+      productId: +productId,
+      productOfferId: +productOfferId,
+      input,
+      user,
+    });
   }
 }

@@ -9,6 +9,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 
+import { UserRoles } from '../constant';
 import { User } from '../../modules/user/entities/user.entity';
 import { AuthService } from '../../modules/auth/services/auth.service';
 
@@ -20,7 +21,7 @@ export class AuthorizeGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     this.logger.log(`canActivate:start => ${new Date()}`);
-    const authorize = this.reflector.get('authorize', context.getHandler());
+    const authorize = this.reflector.get<{ roles?: UserRoles[] }>('authorize', context.getHandler());
     if (!authorize) {
       this.logger.log(`canActivate:end => ${new Date()}`);
 
@@ -38,7 +39,7 @@ export class AuthorizeGuard implements CanActivate {
     let user: User;
 
     try {
-      user = await this.authService.authorize(token, authorize?.roles || '');
+      user = await this.authService.authorize({ token, role: authorize?.roles || [] });
     } catch (error) {
       this.logger.error(`canActivate:error => ${error.message}`);
 

@@ -20,8 +20,11 @@ export class ProductService {
   ) {}
 
   // Products API
-  async createProduct(input: CreateProductInputDto, owner: User): Promise<Product> {
-    const { category: categoryName, description, name, price, status } = input;
+  async createProduct(params: { input: CreateProductInputDto; owner: User }): Promise<Product> {
+    const {
+      input: { category: categoryName, description, name, price, status },
+      owner,
+    } = params;
 
     const category = await this.categoryService.getCategoryByName(categoryName);
     const product = new Product();
@@ -37,14 +40,18 @@ export class ProductService {
     return await this.productRepository.save(product);
   }
 
-  async updateProduct(productId: number, input: Partial<Product>): Promise<Product> {
+  async updateProduct(params: { productId: number; input: Partial<Product> }): Promise<Product> {
+    const {
+      productId,
+      input: { status, bidder },
+    } = params;
     const product = await this.productRepository.findOne(productId);
     if (!product) {
       throw new BadRequestException('Product does not exist.');
     }
 
-    product.status = input.status || product.status;
-    product.bidder = input.bidder || product.bidder;
+    product.status = status || product.status;
+    product.bidder = bidder || product.bidder;
 
     return await this.productRepository.save(product);
   }
@@ -69,23 +76,29 @@ export class ProductService {
   }
 
   // Product Offers API
-  async createProductOffer(productId: number, input: CreateProductOfferInputDto, user: User): Promise<ProductOffer> {
+  async createProductOffer(params: {
+    productId: number;
+    input: CreateProductOfferInputDto;
+    user: User;
+  }): Promise<ProductOffer> {
+    const { productId, input, user } = params;
     const product = await this.getProduct(productId);
     if (product.status === ProductStatus.SOLD) {
       throw new BadRequestException('Product is already sold.');
     }
 
-    const productOffer = await this.productOfferService.createProductOffer(user, product, input);
+    const productOffer = await this.productOfferService.createProductOffer({ input, product, user });
 
     return productOffer;
   }
 
-  async updateProductOffer(
-    productId: number,
-    productOfferId: number,
-    input: Partial<ProductOffer>,
-    user: User
-  ): Promise<ProductOffer> {
+  async updateProductOffer(params: {
+    productId: number;
+    productOfferId: number;
+    input: Partial<ProductOffer>;
+    user: User;
+  }): Promise<ProductOffer> {
+    const { productId, productOfferId, input, user } = params;
     const product = await this.getProduct(productId);
     if (product.owner.id !== user.id) {
       throw new BadRequestException('Product does not exist.');
@@ -96,7 +109,10 @@ export class ProductService {
 
     // update product status
     if (input.status === ProductOfferStatus.ACCEPTED) {
-      await this.updateProduct(product.id, { status: ProductStatus.SOLD, bidder: productOffer.user });
+      await this.updateProduct({
+        productId: product.id,
+        input: { status: ProductStatus.SOLD, bidder: productOffer.user },
+      });
     }
 
     return productOffer;

@@ -1,12 +1,12 @@
 import { BadRequestException, ForbiddenException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
+import { UserRoles } from '../../../common/constant';
 import { ICredential } from '../interfaces';
 import { LoginAuthInputDto, RegisterAuthInputDto } from '../dtos';
 import { ConfigService } from '../../config/config.service';
 import { User } from '../../user/entities/user.entity';
 import { UserService } from '../../user/services/user.service';
-import { UserRoles } from 'src/common/constant';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +23,7 @@ export class AuthService {
     let user: User;
 
     try {
-      user = await this.userService.validateUsernameAndPassword(username, password);
+      user = await this.userService.validateUsernameAndPassword({ username, password });
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -53,7 +53,8 @@ export class AuthService {
     return credential;
   }
 
-  async authorize(token: string, role?: UserRoles[]): Promise<User> {
+  async authorize(params: { token: string; role?: UserRoles[] }): Promise<User> {
+    const { token, role } = params;
     let payload: { exp: number; userId: number };
 
     try {

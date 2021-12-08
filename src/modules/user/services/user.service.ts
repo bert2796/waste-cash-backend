@@ -36,7 +36,8 @@ export class UserService {
     return await this.userRepository.findOne(id);
   }
 
-  async validateUsernameAndPassword(username: string, password: string): Promise<User> {
+  async validateUsernameAndPassword(params: { username: string; password: string }): Promise<User> {
+    const { username, password } = params;
     const user = await this.userRepository.findOneByEmailOrUsername(username, username);
     if (!user || !(await user.isSamePassword(password))) {
       throw new Error('User does not exist.');

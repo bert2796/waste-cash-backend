@@ -10,7 +10,12 @@ import { ProductOfferRepository } from '../repositories/productOffer.repository'
 export class ProductOfferService {
   constructor(private readonly productOfferRepository: ProductOfferRepository) {}
 
-  async createProductOffer(user: User, product: Product, input: CreateProductOfferInputDto): Promise<ProductOffer> {
+  async createProductOffer(params: {
+    input: CreateProductOfferInputDto;
+    product: Product;
+    user: User;
+  }): Promise<ProductOffer> {
+    const { input, product, user } = params;
     let productOffer = await this.productOfferRepository.findOne({ user, product });
     if (productOffer) {
       throw new BadRequestException('Offer is already existing.');
