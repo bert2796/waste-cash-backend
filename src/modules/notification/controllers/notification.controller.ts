@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Req } from '@nestjs/common';
+import { Controller, Get, Patch, HttpCode, HttpStatus, Req, Param, Body, Query } from '@nestjs/common';
 
 import { Authorize } from '../../../common/decorators/authorize.decorator';
 import { User } from '../../user/entities/user.entity';
@@ -16,5 +16,29 @@ export class NotificationController {
     const { user } = req;
 
     return await this.notificationService.getNotifications(user);
+  }
+
+  @Patch('/:notificationId')
+  @HttpCode(HttpStatus.OK)
+  @Authorize()
+  async updateNotification(
+    @Param('notificationId') notificationId: string,
+    @Body() input: Partial<Notification>
+  ): Promise<Notification> {
+    return await this.notificationService.updateNotification({ notificationId: +notificationId, input });
+  }
+
+  @Patch('/')
+  @HttpCode(HttpStatus.OK)
+  @Authorize()
+  async updateNotifications(
+    @Query() query: { notificationIds: string },
+    @Body() input: Partial<Notification>
+  ): Promise<Notification[]> {
+    const notificationIds = query.notificationIds
+      ? query.notificationIds.split(',').map((notificationId) => +notificationId)
+      : [];
+
+    return await this.notificationService.updateNotifications({ notificationIds, input });
   }
 }
