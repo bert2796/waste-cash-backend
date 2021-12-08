@@ -9,6 +9,7 @@ import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { EventModule } from './event/event.module';
 import { HealthModule } from './health/health.module';
+import { NotificationModule } from './notification/notification.module';
 import { ProductModule } from './product/product.module';
 import { ProductOfferModule } from './productOffer/productOffer.module';
 import { UserModule } from './user/user.module';
@@ -26,6 +27,7 @@ import { UserModule } from './user/user.module';
     ConfigModule,
     EventModule,
     HealthModule,
+    NotificationModule,
     ProductModule,
     ProductOfferModule,
     UserModule,
