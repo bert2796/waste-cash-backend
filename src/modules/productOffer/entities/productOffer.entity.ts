@@ -9,14 +9,13 @@ import {
 } from 'typeorm';
 
 import { ProductOfferStatus } from '../../../common/constant';
-import { IProductOffer } from '../interfaces';
 import { Product } from '../../product/entities/product.entity';
 import { User } from '../../user/entities/user.entity';
 
 export const publicFields: string[] = ['id', 'price', 'status', 'createdAt', 'updatedAt'];
 
 @Entity({ name: 'productOffers' })
-export class ProductOffer implements IProductOffer {
+export class ProductOffer {
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -1,11 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-import { ICategory } from '../interfaces';
-
 export const publicFields: string[] = ['id', 'name', 'slug', 'createdAt', 'updatedAt'];
 
 @Entity({ name: 'categories' })
-export class Category implements ICategory {
+export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 

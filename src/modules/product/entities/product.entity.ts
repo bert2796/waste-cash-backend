@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 
 import { ProductStatus } from '../../../common/constant';
-import { IProduct } from '../interfaces';
 import { Category } from '../../category/entities/category.entity';
 import { User } from '../../user/entities/user.entity';
 import { ProductOffer } from '../../productOffer/entities/productOffer.entity';
@@ -27,7 +26,7 @@ export const publicFields: string[] = [
 ];
 
 @Entity({ name: 'products' })
-export class Product implements IProduct {
+export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 

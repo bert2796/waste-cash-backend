@@ -2,12 +2,11 @@ import { Entity, Column, BeforeInsert, PrimaryGeneratedColumn, CreateDateColumn,
 import bcrypt from 'bcrypt';
 
 import { UserRoles } from '../../../common/constant';
-import { IUser } from '../interfaces';
 
 export const publicFields: string[] = ['id', 'firstName', 'lastName', 'email', 'phone', 'address', 'city', 'zip'];
 
 @Entity({ name: 'users' })
-export class User implements IUser {
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
