@@ -39,7 +39,10 @@ export class AuthorizeGuard implements CanActivate {
     let user: User;
 
     try {
-      user = await this.authService.authorize({ token, role: authorize?.roles || [] });
+      user = await this.authService.authorize({
+        token,
+        ...(authorize?.roles?.length && { role: authorize.roles }),
+      });
     } catch (error) {
       this.logger.error(`canActivate:error => ${error.message}`);
 
