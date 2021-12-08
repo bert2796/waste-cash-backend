@@ -27,4 +27,8 @@ export class NotificationService {
 
     return await this.notificationRepository.save(notification);
   }
+
+  async getNotifications(user: User): Promise<Notification[]> {
+    return await this.notificationRepository.find({ to: user });
+  }
 }

@@ -16,14 +16,18 @@ export class ProductOfferSubscriber implements EntitySubscriberInterface<Product
   }
 
   async afterInsert(event: InsertEvent<ProductOffer>): Promise<void> {
+    const {
+      entity: { user, product },
+    } = event;
+
     await this.notificationService.createNotification({
       input: {
         event: 'create-product-offer',
-        description: `New offer for Product ${event.entity.product.name}`,
+        description: `New offer for ${product.name} from ${user.firstName} ${user.lastName}`,
       },
-      from: event.entity.user,
-      to: event.entity.product.owner,
-      product: event.entity.product,
+      from: user,
+      to: product.owner,
+      product: product,
     });
   }
 }
