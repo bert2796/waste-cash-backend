@@ -36,6 +36,9 @@ export class ConfigService {
       MYSQL_USERNAME: joi.string().required(),
       PORT: joi.number().required(),
       TYPEORM_LOGGING: joi.boolean().required(),
+      SPACE_ENDPOINT: joi.string().required(),
+      SPACE_KEY: joi.string().required(),
+      SPACE_SECRET: joi.string().required(),
     });
 
     const { error, value } = configSchema.validate(config);

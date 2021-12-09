@@ -12,6 +12,7 @@ import { HealthModule } from './health/health.module';
 import { NotificationModule } from './notification/notification.module';
 import { ProductModule } from './product/product.module';
 import { ProductOfferModule } from './productOffer/productOffer.module';
+import { SpaceModule } from './space/space.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -30,6 +31,7 @@ import { UserModule } from './user/user.module';
     NotificationModule,
     ProductModule,
     ProductOfferModule,
+    SpaceModule,
     UserModule,
   ],
   providers: [
