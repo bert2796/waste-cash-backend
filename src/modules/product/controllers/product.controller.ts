@@ -1,4 +1,18 @@
-import { Controller, Get, Post, Patch, HttpCode, HttpStatus, Param, Body, Req, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Body,
+  Req,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { Authorize } from '../../../common/decorators/authorize.decorator';
 import { UserRoles } from '../../../common/constant';
@@ -14,13 +28,18 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   // Products API
+  @UseInterceptors(FileInterceptor('image'))
   @Post('/')
   @HttpCode(HttpStatus.CREATED)
   @Authorize([UserRoles.SELLER])
-  async createProduct(@Body() input: CreateProductInputDto, @Req() req: { user: User }): Promise<Product> {
+  async createProduct(
+    @UploadedFile() image: Express.Multer.File,
+    @Body() input: CreateProductInputDto,
+    @Req() req: { user: User }
+  ): Promise<Product> {
     const { user } = req;
 
-    return await this.productService.createProduct({ input, owner: user });
+    return await this.productService.createProduct({ input, image, owner: user });
   }
 
   @Get('/')

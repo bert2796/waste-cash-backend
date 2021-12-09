@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 import { ProductStatus } from '../../../common/constant';
 
@@ -16,8 +16,8 @@ export class CreateProductInputDto {
   name: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  price: number;
+  @IsString()
+  price: string;
 
   @IsNotEmpty()
   @IsEnum(ProductStatus)

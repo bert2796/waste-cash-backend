@@ -5,8 +5,9 @@ import { CreateProductInputDto } from '../dtos';
 import { CreateProductOfferInputDto } from '../../productOffer/dtos';
 import { CategoryService } from '../../category/services/category.service';
 import { ProductOfferService } from '../../productOffer/services/productOffer.service';
-import { User } from '../../user/entities/user.entity';
+import { SpaceService } from '../../space/services/space.service';
 import { ProductOffer } from '../../productOffer/entities/productOffer.entity';
+import { User } from '../../user/entities/user.entity';
 import { Product } from '../entities/product.entity';
 import { ProductRepository } from '../repositories/product.repository';
 import { randomString, slugify } from '../../../common/utils';
@@ -14,28 +15,48 @@ import { randomString, slugify } from '../../../common/utils';
 @Injectable()
 export class ProductService {
   constructor(
-    private readonly productRepository: ProductRepository,
     private readonly categoryService: CategoryService,
-    private readonly productOfferService: ProductOfferService
+    private readonly productOfferService: ProductOfferService,
+    private readonly spaceService: SpaceService,
+    private readonly productRepository: ProductRepository
   ) {}
 
   // Products API
-  async createProduct(params: { input: CreateProductInputDto; owner: User }): Promise<Product> {
+  async createProduct(params: {
+    input: CreateProductInputDto;
+    image: Express.Multer.File;
+    owner: User;
+  }): Promise<Product> {
     const {
       input: { category: categoryName, description, name, price, status },
+      image,
       owner,
     } = params;
 
+    // retrieve category
     const category = await this.categoryService.getCategoryByName(categoryName);
+
+    // generate slug
+    const slug = `${slugify(name)}-${randomString()}`;
+
+    // upload file
+    const fileExtension = image?.mimetype?.split('/')?.[1] || 'jpeg';
+    const uploadedImage = await this.spaceService.uploadFile({
+      bucket: 'wastecash/product_images',
+      file: image,
+      name: `${slug}.${fileExtension}`,
+    });
+
+    // create product
     const product = new Product();
     product.category = category;
     product.owner = owner;
     product.description = description;
     product.name = name;
-    product.price = price;
-    product.slug = `${slugify(name)}-${randomString()}`;
+    product.price = +price;
+    product.slug = slug;
     product.status = status;
-    product.thumbnail = 'a';
+    product.thumbnail = uploadedImage.Location;
 
     return await this.productRepository.save(product);
   }
