@@ -11,6 +11,7 @@ import {
 import { User } from '../../user/entities/user.entity';
 import { Product } from '../../product/entities/product.entity';
 
+export const publicFields: string[] = ['id', 'description', 'event', 'isSeen', 'createdAt', 'updatedAt'];
 @Entity({ name: 'notifications' })
 export class Notification {
   @PrimaryGeneratedColumn()
