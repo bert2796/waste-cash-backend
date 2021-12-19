@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { IsNull, Not } from 'typeorm';
 
 import { UserRoles } from '../../../common/constant';
 import { CreateUserInputDto } from '../dtos';
@@ -34,6 +35,10 @@ export class UserService {
 
   async getUser(id: number): Promise<User> {
     return await this.userRepository.findOne(id);
+  }
+
+  async getJunkShopUsers(): Promise<User[]> {
+    return await this.userRepository.find({ junkShopName: Not(IsNull()) });
   }
 
   async validateUsernameAndPassword(params: { username: string; password: string }): Promise<User> {

@@ -13,6 +13,7 @@ import { MessageModule } from './message/message.module';
 import { NotificationModule } from './notification/notification.module';
 import { ProductModule } from './product/product.module';
 import { ProductOfferModule } from './productOffer/productOffer.module';
+import { ShopModule } from './shop/shop.module';
 import { SpaceModule } from './space/space.module';
 import { UserModule } from './user/user.module';
 
@@ -33,6 +34,7 @@ import { UserModule } from './user/user.module';
     NotificationModule,
     ProductModule,
     ProductOfferModule,
+    ShopModule,
     SpaceModule,
     UserModule,
   ],
