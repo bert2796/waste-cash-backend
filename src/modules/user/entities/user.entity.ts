@@ -28,7 +28,7 @@ export class User {
   @Column({ type: 'varchar', length: 128 })
   username: string;
 
-  @Column({ type: 'varchar', length: 128 })
+  @Column({ type: 'varchar', length: 128, select: false })
   password: string;
 
   @Column({ type: 'enum', enum: UserRoles, default: UserRoles.BUYER })
