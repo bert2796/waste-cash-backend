@@ -28,12 +28,17 @@ export class EventGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   @SubscribeMessage('createOffer')
-  handleCreateOfferMessage(client: Socket, payload: string): void {
+  handleCreateOfferEvent(client: Socket, payload: string): void {
     this.server.emit('createOffer', payload);
   }
 
   @SubscribeMessage('updateOffer')
-  handleUpdateOfferMessage(client: Socket, payload: string): void {
+  handleUpdateOfferEvent(client: Socket, payload: string): void {
     this.server.emit('updateOffer', payload);
+  }
+
+  @SubscribeMessage('createMessage')
+  handleCreateMessageEvent(client: Socket, payload: string): void {
+    this.server.emit('createMessage', payload);
   }
 }

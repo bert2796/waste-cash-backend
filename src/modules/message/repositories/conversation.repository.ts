@@ -67,9 +67,8 @@ export class ConversationRepository extends Repository<Conversation> {
       .whereInIds(conversationIds);
 
     const conversations = await conversationsQuery.getRawMany();
-    console.log(conversations);
     const result: IConversationSummary[] = conversations.map((conversation) => ({
-      id: conversation.id,
+      id: conversation.conversation_id,
       message: {
         id: conversation.message_id,
         content: conversation.message_content,

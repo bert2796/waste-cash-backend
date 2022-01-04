@@ -1,6 +1,7 @@
-import { Controller, Get, HttpCode, HttpStatus, Req } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Req, Param } from '@nestjs/common';
 
 import { IConversationSummary } from '../interfaces';
+import { Conversation } from '../entities/conversation.entity';
 import { Authorize } from '../../../common/decorators/authorize.decorator';
 import { User } from '../../user/entities/user.entity';
 import { ConversationService } from '../services/conversation.service';
@@ -16,5 +17,27 @@ export class ConversationsController {
     const { user } = req;
 
     return await this.conversationService.getSummary({ user });
+  }
+
+  @Get('/:conversationId')
+  @HttpCode(HttpStatus.OK)
+  @Authorize()
+  async getConversationByConversationId(
+    @Req() req: { user: User },
+    @Param('conversationId') conversationId: string
+  ): Promise<Conversation> {
+    return await this.conversationService.getConversation({ conversationId: +conversationId, includeMessage: true });
+  }
+
+  @Get('/shop/:userId')
+  @HttpCode(HttpStatus.OK)
+  @Authorize()
+  async getConversationByShopId(
+    @Req() req: { user: User },
+    @Param('userId') recipientId: string
+  ): Promise<Conversation> {
+    const { user } = req;
+
+    return await this.conversationService.getConversationByShop({ recipientId: +recipientId, senderId: user.id });
   }
 }

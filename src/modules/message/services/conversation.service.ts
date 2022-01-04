@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Inject, forwardRef } from '@nestjs/common';
 
 import { IConversationSummary } from '../interfaces';
 import { User } from '../../user/entities/user.entity';
@@ -6,10 +6,13 @@ import { Conversation } from '../entities/conversation.entity';
 import { ConversationMember } from '../entities/conversationMember.entity';
 import { ConversationRepository } from '../repositories/conversation.repository';
 import { ConversationMemberRepository } from '../repositories/conversationMember.repository';
+import { MessageService } from '../services/message.service';
 
 @Injectable()
 export class ConversationService {
   constructor(
+    @Inject(forwardRef(() => MessageService))
+    private readonly messageService: MessageService,
     private readonly conversationRepository: ConversationRepository,
     private readonly conversationMemberRepository: ConversationMemberRepository
   ) {}
@@ -34,15 +37,39 @@ export class ConversationService {
 
   async getConversation(params: { conversationId: number; includeMessage?: boolean }): Promise<Conversation> {
     const { conversationId, includeMessage } = params;
-    const relations = ['members', 'members.user'];
+    const relations = [];
+    // const relations = ['members', 'members.user'];
 
     if (includeMessage) {
-      relations.push('messages');
+      relations.push(...['messages', 'messages.recipient', 'messages.sender']);
     }
 
     const conversation = await this.conversationRepository.findOne(conversationId, {
       relations,
     });
+    if (!conversation) {
+      throw new BadRequestException('Conversation does not exist.');
+    }
+
+    return conversation;
+  }
+
+  async getConversationByShop(params: { recipientId: number; senderId: number }): Promise<Conversation> {
+    const { recipientId, senderId } = params;
+
+    let conversation;
+    try {
+      const message = await this.messageService.getMessageBySenderAndRecipient({ recipientId, senderId });
+      if (message) {
+        conversation = await this.conversationRepository.findOne({
+          where: { id: message.conversation.id },
+          relations: ['messages', 'messages.recipient', 'messages.sender'],
+        });
+      }
+    } catch (error) {
+      throw new BadRequestException('Conversation does not exist.');
+    }
+
     if (!conversation) {
       throw new BadRequestException('Conversation does not exist.');
     }

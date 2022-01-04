@@ -1,11 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
+import { BadRequestException, Injectable, Inject, forwardRef } from '@nestjs/common';
 
 import { CreateMessageInputDto } from '../dtos';
 import { User } from '../../user/entities/user.entity';
 import { Conversation } from '../entities/conversation.entity';
 import { Message } from '../entities/message.entity';
-import { ConversationMemberRepository } from '../repositories/conversationMember.repository';
 import { MessageRepository } from '../repositories/message.repository';
 import { ConversationService } from '../services/conversation.service';
 import { UserService } from '../../user/services/user.service';
@@ -13,8 +11,9 @@ import { UserService } from '../../user/services/user.service';
 @Injectable()
 export class MessageService {
   constructor(
-    private readonly messageRepository: MessageRepository,
+    @Inject(forwardRef(() => ConversationService))
     private readonly conversationService: ConversationService,
+    private readonly messageRepository: MessageRepository,
     private readonly userService: UserService
   ) {}
 
@@ -60,5 +59,22 @@ export class MessageService {
     // const conversations = await this.conversationRepository.find({
     //   id: In(memberConversations.map((memberConversation) => memberConversation.id)),
     // });
+  }
+
+  async getMessageBySenderAndRecipient(params: { senderId: number; recipientId: number }): Promise<Message> {
+    const { senderId, recipientId } = params;
+
+    const message = await this.messageRepository.findOne({
+      where: [
+        { sender: senderId, recipient: recipientId },
+        { sender: recipientId, recipient: senderId },
+      ],
+      relations: ['conversation'],
+    });
+    if (!message) {
+      throw new BadRequestException('No message found.');
+    }
+
+    return message;
   }
 }
