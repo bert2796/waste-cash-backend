@@ -37,15 +37,11 @@ export class ConversationService {
 
   async getConversation(params: { conversationId: number; includeMessage?: boolean }): Promise<Conversation> {
     const { conversationId, includeMessage } = params;
-    const relations = [];
-    // const relations = ['members', 'members.user'];
 
-    if (includeMessage) {
-      relations.push(...['messages', 'messages.recipient', 'messages.sender']);
-    }
-
-    const conversation = await this.conversationRepository.findOne(conversationId, {
-      relations,
+    const conversation = await this.conversationRepository.getConversationWithMessages({
+      conversationId,
+      includeMembers: true,
+      includeMessages: includeMessage,
     });
     if (!conversation) {
       throw new BadRequestException('Conversation does not exist.');
@@ -61,12 +57,13 @@ export class ConversationService {
     try {
       const message = await this.messageService.getMessageBySenderAndRecipient({ recipientId, senderId });
       if (message) {
-        conversation = await this.conversationRepository.findOne({
-          where: { id: message.conversation.id },
-          relations: ['messages', 'messages.recipient', 'messages.sender'],
+        conversation = await this.conversationRepository.getConversationWithMessages({
+          conversationId: message.conversation.id,
+          includeMessages: true,
         });
       }
     } catch (error) {
+      console.log(error);
       throw new BadRequestException('Conversation does not exist.');
     }
 

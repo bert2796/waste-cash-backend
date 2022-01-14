@@ -89,4 +89,26 @@ export class ConversationRepository extends Repository<Conversation> {
 
     return result;
   }
+
+  async getConversationWithMessages(params: {
+    conversationId: number;
+    includeMembers?: boolean;
+    includeMessages?: boolean;
+  }): Promise<Conversation> {
+    const query = this.createQueryBuilder('conversations').where({ id: params.conversationId });
+
+    if (params?.includeMembers) {
+      query.leftJoinAndSelect('conversations.members', 'members').leftJoinAndSelect('members.user', 'user');
+    }
+
+    if (params?.includeMessages) {
+      query
+        .leftJoinAndSelect('conversations.messages', 'messages')
+        .leftJoinAndSelect('messages.recipient', 'recipient')
+        .leftJoinAndSelect('messages.sender', 'sender')
+        .orderBy('messages.id', 'DESC');
+    }
+
+    return await query.getOne();
+  }
 }

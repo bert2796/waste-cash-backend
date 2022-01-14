@@ -28,7 +28,9 @@ export class MessageService {
     let conversation: Conversation;
 
     if (input.conversationId) {
-      conversation = await this.conversationService.getConversation({ conversationId: input.conversationId });
+      conversation = await this.conversationService.getConversation({
+        conversationId: input.conversationId,
+      });
       recipient = conversation.members?.find((member) => member.user.id === input.recipientId)?.user;
       if (!recipient) {
         throw new BadRequestException('Recipient does not exist.');
