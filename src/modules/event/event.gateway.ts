@@ -41,4 +41,9 @@ export class EventGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   handleCreateMessageEvent(client: Socket, payload: string): void {
     this.server.emit('createMessage', payload);
   }
+
+  @SubscribeMessage('directMessage')
+  handleDirectMessageEvent(client: Socket, payload: string): void {
+    this.server.emit('directMessage', payload);
+  }
 }
