@@ -38,7 +38,7 @@ export class ProductOfferService {
 
   async getProductOffer(productOfferId: number): Promise<ProductOffer> {
     const productOffer = await this.productOfferRepository.findOne(productOfferId, {
-      relations: ['user'],
+      relations: ['user', 'product', 'product.owner'],
     });
     if (!productOffer) {
       throw new BadRequestException('Offer does not exist.');

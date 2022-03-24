@@ -3,7 +3,17 @@ import bcrypt from 'bcrypt';
 
 import { UserRoles } from '../../../common/constant';
 
-export const publicFields: string[] = ['id', 'firstName', 'lastName', 'email', 'phone', 'address', 'city', 'zip'];
+export const publicFields: string[] = [
+  'id',
+  'firstName',
+  'lastName',
+  'email',
+  'phone',
+  'address',
+  'city',
+  'zip',
+  'junkShopName',
+];
 
 @Entity({ name: 'users' })
 export class User {

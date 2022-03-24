@@ -79,11 +79,13 @@ export class ConversationRepository extends Repository<Conversation> {
         id: conversation.recipient_id,
         firstName: conversation.recipient_firstName,
         lastName: conversation.recipient_lastName,
+        junkShopName: conversation.recipient_junkShopName,
       },
       sender: {
         id: conversation.sender_id,
         firstName: conversation.sender_firstName,
         lastName: conversation.sender_lastName,
+        junkShopName: conversation.sender_junkShopName,
       },
     }));
 

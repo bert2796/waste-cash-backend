@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { ProductStatus } from '../../../common/constant';
+import { BidderSetup } from '../../bidderSetup/entities/bidderSetup.entity';
 import { Category } from '../../category/entities/category.entity';
 import { User } from '../../user/entities/user.entity';
 import { ProductOffer } from '../../productOffer/entities/productOffer.entity';
@@ -65,6 +66,10 @@ export class Product {
   @ManyToOne(() => User)
   @JoinColumn()
   bidder: User;
+
+  @ManyToOne(() => BidderSetup)
+  @JoinColumn()
+  bidderSetup: BidderSetup;
 
   @OneToMany(() => ProductOffer, (offer) => offer.product)
   offers: ProductOffer[];

@@ -29,15 +29,15 @@ export class ConversationsController {
     return await this.conversationService.getConversation({ conversationId: +conversationId, includeMessage: true });
   }
 
-  @Get('/shop/:userId')
+  @Get('/recipient/:userId')
   @HttpCode(HttpStatus.OK)
   @Authorize()
-  async getConversationByShopId(
+  async getConversationByRecipientId(
     @Req() req: { user: User },
     @Param('userId') recipientId: string
   ): Promise<Conversation> {
     const { user } = req;
 
-    return await this.conversationService.getConversationByShop({ recipientId: +recipientId, senderId: user.id });
+    return await this.conversationService.getConversationByRecipient({ recipientId: +recipientId, senderId: user.id });
   }
 }

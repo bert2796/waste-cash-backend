@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthorizeGuard } from '../common/guards/authorize.guard';
 import { AuthModule } from './auth/auth.module';
+import { BidderSetupModule } from './bidderSetup/bidderSetup.module';
 import { CategoryModule } from './category/category.module';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
@@ -26,6 +27,7 @@ import { UserModule } from './user/user.module';
     }),
 
     AuthModule,
+    BidderSetupModule,
     CategoryModule,
     ConfigModule,
     EventModule,

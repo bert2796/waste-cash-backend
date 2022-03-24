@@ -50,7 +50,7 @@ export class ConversationService {
     return conversation;
   }
 
-  async getConversationByShop(params: { recipientId: number; senderId: number }): Promise<Conversation> {
+  async getConversationByRecipient(params: { recipientId: number; senderId: number }): Promise<Conversation> {
     const { recipientId, senderId } = params;
 
     let conversation;
@@ -63,7 +63,6 @@ export class ConversationService {
         });
       }
     } catch (error) {
-      console.log(error);
       throw new BadRequestException('Conversation does not exist.');
     }
 
