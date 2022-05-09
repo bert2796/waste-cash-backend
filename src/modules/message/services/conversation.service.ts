@@ -82,4 +82,49 @@ export class ConversationService {
 
     return await this.conversationRepository.getSummary(memberConversations);
   }
+
+  async updateConversationMessages(params: {
+    conversationId: number;
+    senderId?: number;
+    recipientId?: number;
+  }): Promise<Conversation> {
+    const { conversationId, senderId, recipientId } = params;
+
+    let conversation = await this.conversationRepository.getConversationWithMessages({
+      conversationId,
+      includeMembers: true,
+      includeMessages: true,
+    });
+    if (!conversation) {
+      throw new BadRequestException('Conversation does not exist.');
+    }
+
+    const sender = senderId || conversation.members.filter((member) => member.user.id !== recipientId)[0].user?.id;
+    if (!sender) {
+      throw new BadRequestException('Sender does not exist.');
+    }
+
+    console.log('-------------------------------');
+    console.log(sender);
+
+    const messagesToUpdate = conversation.messages.filter((message) => message.sender.id === sender);
+    if (!messagesToUpdate.length) {
+      throw new BadRequestException('No messages.');
+    }
+
+    await Promise.all(
+      conversation.messages.map(async (message) => {
+        await this.messageService.updateMessage(message.id, { isSeen: true });
+      })
+    );
+
+    // retrieve updated messages
+    conversation = await this.conversationRepository.getConversationWithMessages({
+      conversationId,
+      includeMembers: true,
+      includeMessages: true,
+    });
+
+    return conversation;
+  }
 }

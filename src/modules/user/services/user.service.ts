@@ -33,6 +33,19 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
+  async updateUser(params: { user: User; input: Partial<User> }): Promise<User> {
+    const { user, input } = params;
+
+    user.firstName = input.firstName || user.firstName;
+    user.lastName = input.lastName || user.lastName;
+    user.address = input.address || user.address;
+    user.city = input.city || user.city;
+    user.zip = input.zip || user.zip;
+    user.phone = input.phone || user.phone;
+
+    return await this.userRepository.save(user);
+  }
+
   async getUser(id: number): Promise<User> {
     return await this.userRepository.findOne(id);
   }

@@ -8,12 +8,14 @@ import { ProductOfferModule } from '../productOffer/productOffer.module';
 import { ProductRepository } from './repositories/product.repository';
 import { ProductController } from './controllers/product.controller';
 import { ProductService } from './services/product.service';
+import { ReviewModule } from '../review/review.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProductRepository]),
     BidderSetupModule,
     CategoryModule,
+    ReviewModule,
     SpaceModule,
     forwardRef(() => ProductOfferModule),
   ],

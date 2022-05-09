@@ -26,10 +26,10 @@ export class Notification {
   @Column({ type: 'boolean', default: false })
   isSeen: boolean;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => '(CURRENT_DATE)' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => '(CURRENT_DATE)' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @ManyToOne(() => Product)

@@ -2,11 +2,17 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { ProductStatus, ProductOfferStatus } from '../../../common/constant';
 import { CreateProductInputDto } from '../dtos';
+import { CreateBidderSetupInputDto } from '../../bidderSetup/dtos';
 import { CreateProductOfferInputDto } from '../../productOffer/dtos';
+import { CreateReviewInputDto } from '../../review/dtos';
+import { BidderSetupService } from '../../bidderSetup/services/bidderSetup.service';
 import { CategoryService } from '../../category/services/category.service';
 import { ProductOfferService } from '../../productOffer/services/productOffer.service';
+import { ReviewService } from '../../review/services/review.service';
 import { SpaceService } from '../../space/services/space.service';
+import { BidderSetup } from '../../bidderSetup/entities/bidderSetup.entity';
 import { ProductOffer } from '../../productOffer/entities/productOffer.entity';
+import { Review } from '../../review/entities/review.entity';
 import { User } from '../../user/entities/user.entity';
 import { Product } from '../entities/product.entity';
 import { ProductRepository } from '../repositories/product.repository';
@@ -15,8 +21,10 @@ import { randomString, slugify } from '../../../common/utils';
 @Injectable()
 export class ProductService {
   constructor(
+    private readonly bidderSetupService: BidderSetupService,
     private readonly categoryService: CategoryService,
     private readonly productOfferService: ProductOfferService,
+    private readonly reviewService: ReviewService,
     private readonly spaceService: SpaceService,
     private readonly productRepository: ProductRepository
   ) {}
@@ -64,8 +72,9 @@ export class ProductService {
   async updateProduct(params: { productId: number; input: Partial<Product> }): Promise<Product> {
     const {
       productId,
-      input: { status, bidder },
+      input: { status, bidder, bidderSetup, offer, review },
     } = params;
+
     const product = await this.productRepository.findOne(productId);
     if (!product) {
       throw new BadRequestException('Product does not exist.');
@@ -73,6 +82,9 @@ export class ProductService {
 
     product.status = status || product.status;
     product.bidder = bidder || product.bidder;
+    product.offer = offer || product.offer;
+    product.bidderSetup = bidderSetup || product.bidderSetup;
+    product.review = review || product.review;
 
     return await this.productRepository.save(product);
   }
@@ -87,7 +99,17 @@ export class ProductService {
 
   async getProduct(id: number): Promise<Product> {
     const product = await this.productRepository.findOne(id, {
-      relations: ['category', 'owner', 'bidder', 'offers', 'offers.user'],
+      relations: [
+        'category',
+        'owner',
+        'bidder',
+        'bidderSetup',
+        'bidderSetup.address',
+        'offer',
+        'offers',
+        'offers.user',
+        'review',
+      ],
     });
     if (!product) {
       throw new BadRequestException('Product does not exist.');
@@ -128,14 +150,82 @@ export class ProductService {
     // update product offer
     const productOffer = await this.productOfferService.updateProductOffer(productOfferId, input);
 
-    // update product status
     if (input.status === ProductOfferStatus.ACCEPTED) {
+      // update product status
       await this.updateProduct({
         productId: product.id,
-        input: { status: ProductStatus.SOLD, bidder: productOffer.user },
+        input: { status: ProductStatus.SOLD, bidder: productOffer.user, offer: productOffer },
       });
+
+      const rejectedProductOffers = product.offers.filter((offer) => offer.id !== productOffer.id);
+      if (rejectedProductOffers.length) {
+        await Promise.all(
+          rejectedProductOffers.map(async (offer) => {
+            return await this.productOfferService.updateProductOffer(
+              offer.id,
+              { status: ProductOfferStatus.REJECTED },
+              true
+            );
+          })
+        );
+      }
     }
 
     return productOffer;
+  }
+
+  // Product Bidder Setups API
+  async createBidderSetup(params: {
+    productId: number;
+    input: CreateBidderSetupInputDto;
+    user: User;
+  }): Promise<BidderSetup> {
+    const { productId, input, user } = params;
+    const product = await this.getProduct(productId);
+    if (product.owner.id !== user.id) {
+      throw new BadRequestException('Product does not exist.');
+    }
+
+    const bidderSetup = await this.bidderSetupService.createBidderSetup({ product, input });
+
+    await this.updateProduct({
+      productId: product.id,
+      input: { bidderSetup },
+    });
+
+    return bidderSetup;
+  }
+
+  async updateBidderSetup(params: {
+    productId: number;
+    bidderSetupId: number;
+    input: Partial<BidderSetup>;
+    user: User;
+  }): Promise<BidderSetup> {
+    const { productId, bidderSetupId, input, user } = params;
+    const product = await this.getProduct(productId);
+    if (product.owner.id !== user.id) {
+      throw new BadRequestException('Product does not exist.');
+    }
+
+    // update bidder setup
+    const bidderSetup = await this.bidderSetupService.updateBidderSetup(bidderSetupId, input);
+
+    return bidderSetup;
+  }
+
+  // Review API
+  async createReview(params: { productId: number; input: CreateReviewInputDto; user: User }): Promise<Review> {
+    const { productId, input, user } = params;
+    const product = await this.getProduct(productId);
+
+    const review = await this.reviewService.createReview({ product, input, user });
+
+    await this.updateProduct({
+      productId,
+      input: { review },
+    });
+
+    return review;
   }
 }

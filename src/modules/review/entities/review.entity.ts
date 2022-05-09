@@ -8,21 +8,21 @@ import {
   JoinColumn,
 } from 'typeorm';
 
+import { Product } from '../../product/entities/product.entity';
 import { User } from '../../user/entities/user.entity';
-import { Conversation } from './conversation.entity';
 
-export const publicFields: string[] = ['id', 'content', 'isSeen', 'createdAt', 'updatedAt'];
+export const publicFields: string[] = ['id', 'rate', 'createdAt', 'updatedAt'];
 
-@Entity({ name: 'messages' })
-export class Message {
+@Entity({ name: 'reviews' })
+export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 255 })
-  content: string;
+  @Column({ type: 'varchar' })
+  rate: string;
 
-  @Column({ type: 'boolean', default: false })
-  isSeen: boolean;
+  @Column({ type: 'varchar' })
+  feedback: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -30,15 +30,15 @@ export class Message {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Conversation)
+  @ManyToOne(() => Product)
   @JoinColumn()
-  conversation: Conversation;
+  product: Product;
 
   @ManyToOne(() => User)
   @JoinColumn()
-  sender: User;
+  reviewer: User;
 
   @ManyToOne(() => User)
   @JoinColumn()
-  recipient: User;
+  reviewee: User;
 }

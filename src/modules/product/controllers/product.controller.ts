@@ -17,7 +17,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Authorize } from '../../../common/decorators/authorize.decorator';
 import { UserRoles } from '../../../common/constant';
 import { CreateProductInputDto } from '../dtos';
+import { CreateBidderSetupInputDto } from '../../bidderSetup/dtos';
 import { CreateProductOfferInputDto } from '../../productOffer/dtos';
+import { CreateReviewInputDto } from '../../review/dtos';
+import { BidderSetup } from '../../bidderSetup/entities/bidderSetup.entity';
+import { Review } from '../../review/entities/review.entity';
 import { User } from '../../user/entities/user.entity';
 import { ProductOffer } from '../../productOffer/entities/productOffer.entity';
 import { Product } from '../entities/product.entity';
@@ -94,5 +98,54 @@ export class ProductController {
       input,
       user,
     });
+  }
+
+  // Product Bidder Setups API
+  @Post('/:id/bidderSetups')
+  @HttpCode(HttpStatus.CREATED)
+  @Authorize([UserRoles.SELLER])
+  async createBidderSetup(
+    @Param('id') id: string,
+    @Body() input: CreateBidderSetupInputDto,
+    @Req() req: { user: User }
+  ): Promise<BidderSetup> {
+    console.log(input);
+
+    const { user } = req;
+
+    return await this.productService.createBidderSetup({ productId: +id, input, user });
+  }
+
+  @Patch('/:productId/bidderSetups/:bidderSetupId')
+  @HttpCode(HttpStatus.OK)
+  @Authorize([UserRoles.SELLER])
+  async updateBidderSetup(
+    @Param('productId') productId: string,
+    @Param('bidderSetupId') bidderSetupId: string,
+    @Body() input: Partial<BidderSetup>,
+    @Req() req: { user: User }
+  ): Promise<BidderSetup> {
+    const { user } = req;
+
+    return await this.productService.updateBidderSetup({
+      productId: +productId,
+      bidderSetupId: +bidderSetupId,
+      input,
+      user,
+    });
+  }
+
+  // Review API
+  @Post('/:id/reviews')
+  @HttpCode(HttpStatus.CREATED)
+  @Authorize([UserRoles.BUYER])
+  async createReview(
+    @Param('id') id: string,
+    @Body() input: CreateReviewInputDto,
+    @Req() req: { user: User }
+  ): Promise<Review> {
+    const { user } = req;
+
+    return await this.productService.createReview({ productId: +id, input, user });
   }
 }

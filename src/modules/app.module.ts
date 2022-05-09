@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AddressModule } from './address/address.module';
 import { AuthorizeGuard } from '../common/guards/authorize.guard';
 import { AuthModule } from './auth/auth.module';
 import { BidderSetupModule } from './bidderSetup/bidderSetup.module';
@@ -14,6 +15,7 @@ import { MessageModule } from './message/message.module';
 import { NotificationModule } from './notification/notification.module';
 import { ProductModule } from './product/product.module';
 import { ProductOfferModule } from './productOffer/productOffer.module';
+import { ReviewModule } from './review/review.module';
 import { ShopModule } from './shop/shop.module';
 import { SpaceModule } from './space/space.module';
 import { UserModule } from './user/user.module';
@@ -26,6 +28,7 @@ import { UserModule } from './user/user.module';
       useFactory: (configService: ConfigService) => configService.getTypeOrmConfig(),
     }),
 
+    AddressModule,
     AuthModule,
     BidderSetupModule,
     CategoryModule,
@@ -36,6 +39,7 @@ import { UserModule } from './user/user.module';
     NotificationModule,
     ProductModule,
     ProductOfferModule,
+    ReviewModule,
     ShopModule,
     SpaceModule,
     UserModule,

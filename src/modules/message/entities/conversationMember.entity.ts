@@ -10,10 +10,10 @@ export class ConversationMember {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => '(CURRENT_DATE)' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => '(CURRENT_DATE)' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @ManyToOne(() => Conversation)

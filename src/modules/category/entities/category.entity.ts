@@ -13,9 +13,9 @@ export class Category {
   @Column({ type: 'varchar', length: 128 })
   slug: string;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => '(CURRENT_DATE)' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => '(CURRENT_DATE)' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

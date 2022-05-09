@@ -53,10 +53,10 @@ export class User {
   @Column({ type: 'varchar', length: 128 })
   zip: string;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => '(CURRENT_DATE)' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => '(CURRENT_DATE)' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @BeforeInsert()

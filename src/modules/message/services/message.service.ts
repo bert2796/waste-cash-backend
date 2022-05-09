@@ -56,6 +56,17 @@ export class MessageService {
     return await this.messageRepository.save(message);
   }
 
+  async getMessage(id: number): Promise<Message> {
+    const message = await this.messageRepository.findOne(id, {
+      relations: ['conversation', 'recipient', 'sender'],
+    });
+    if (!message) {
+      throw new BadRequestException('Message does not exist.');
+    }
+
+    return message;
+  }
+
   async getMessages(user: User): Promise<void> {
     // const memberConversations = await this.conversationMemberRepository.find({ user });
     // const conversations = await this.conversationRepository.find({
@@ -78,5 +89,12 @@ export class MessageService {
     }
 
     return message;
+  }
+
+  async updateMessage(messageId: number, input: Partial<Message>): Promise<Message> {
+    const message = await this.getMessage(messageId);
+    message.isSeen = input.isSeen;
+
+    return await this.messageRepository.save(message, { reload: true });
   }
 }

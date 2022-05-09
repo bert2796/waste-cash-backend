@@ -14,6 +14,7 @@ import { BidderSetup } from '../../bidderSetup/entities/bidderSetup.entity';
 import { Category } from '../../category/entities/category.entity';
 import { User } from '../../user/entities/user.entity';
 import { ProductOffer } from '../../productOffer/entities/productOffer.entity';
+import { Review } from '../../review/entities/review.entity';
 
 export const publicFields: string[] = [
   'id',
@@ -49,10 +50,10 @@ export class Product {
   @Column({ type: 'varchar', length: 128 })
   thumbnail: string;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => '(CURRENT_DATE)' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => '(CURRENT_DATE)' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @ManyToOne(() => Category)
@@ -71,6 +72,13 @@ export class Product {
   @JoinColumn()
   bidderSetup: BidderSetup;
 
+  @ManyToOne(() => Review, (review) => review.product)
+  review: Review;
+
   @OneToMany(() => ProductOffer, (offer) => offer.product)
   offers: ProductOffer[];
+
+  @ManyToOne(() => ProductOffer)
+  @JoinColumn()
+  offer: ProductOffer;
 }

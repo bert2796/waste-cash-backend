@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Req, Param } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Req, Param, Patch } from '@nestjs/common';
 
 import { IConversationSummary } from '../interfaces';
 import { Conversation } from '../entities/conversation.entity';
@@ -39,5 +39,20 @@ export class ConversationsController {
     const { user } = req;
 
     return await this.conversationService.getConversationByRecipient({ recipientId: +recipientId, senderId: user.id });
+  }
+
+  @Patch('/:conversationId/seen-all')
+  @HttpCode(HttpStatus.OK)
+  @Authorize()
+  async updateConversationMessages(
+    @Req() req: { user: User },
+    @Param('conversationId') conversationId: string
+  ): Promise<Conversation> {
+    const { user } = req;
+
+    return await this.conversationService.updateConversationMessages({
+      conversationId: +conversationId,
+      recipientId: user.id,
+    });
   }
 }

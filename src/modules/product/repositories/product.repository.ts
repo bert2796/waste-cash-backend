@@ -3,6 +3,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import { publicFields as CATEGORY_PUBLIC_FIELDS } from '../../category/entities/category.entity';
 import { User, publicFields as USER_PUBLIC_FIELDS } from '../../user/entities/user.entity';
 import { Product, publicFields as PRODUCT_PUBLIC_FIELDS } from '../entities/product.entity';
+// import { Review, publicFields as REVIEW_PUBLIC_FIELDS } from '../../review/entities/review.entity';
 
 @EntityRepository(Product)
 export class ProductRepository extends Repository<Product> {
@@ -17,6 +18,8 @@ export class ProductRepository extends Repository<Product> {
     const OWNER_FIELDS = USER_PUBLIC_FIELDS.map((field) => `${OWNER_ALIAS}.${field}`);
     const PRODUCT_ALIAS = 'products';
     const PRODUCT_FIELDS = PRODUCT_PUBLIC_FIELDS.map((field) => `${PRODUCT_ALIAS}.${field}`);
+    // const REVIEW_ALIAS = 'reviews';
+    // const REVIEW_FIELDS = REVIEW_PUBLIC_FIELDS.map((field) => ``);
 
     return await this.createQueryBuilder('products')
       .leftJoinAndSelect('products.category', CATEGORY_ALIAS)

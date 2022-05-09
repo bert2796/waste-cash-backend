@@ -1,8 +1,7 @@
-import { Connection, EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent } from 'typeorm';
+import { Connection, EntitySubscriberInterface, EventSubscriber, InsertEvent } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import numeral from 'numeral';
 
-import { ProductStatus, ProductOfferStatus } from '../../../common/constant';
 import { NotificationService } from '../../notification/services/notification.services';
 import { ProductService } from '../../product/services/product.service';
 import { ProductOffer } from '../entities/productOffer.entity';
@@ -40,34 +39,26 @@ export class ProductOfferSubscriber implements EntitySubscriberInterface<Product
     });
   }
 
-  async afterUpdate(event: UpdateEvent<ProductOffer>): Promise<void> {
-    const {
-      entity: { user, product, price, status },
-    } = event;
+  // async afterUpdate(event: UpdateEvent<ProductOffer>): Promise<void> {
+  //   const {
+  //     entity: { user, product, price, status },
+  //   } = event;
 
-    // update product
-    if (status === ProductOfferStatus.ACCEPTED) {
-      await this.productService.updateProduct({
-        productId: product.id,
-        input: { status: ProductStatus.SOLD, bidder: user },
-      });
-    }
+  //   const formattedPrice = `\u20B1 ${numeral(price).format('0,0.00')}`;
+  //   const description =
+  //     status === ProductOfferStatus.ACCEPTED
+  //       ? `Congratulations! Your offer (${formattedPrice}) for ${product.name} has been selected.
+  //         Seller will send you another notification later for additional details.`
+  //       : `Sorry! Your offer (${formattedPrice}) for ${product.name} has been rejected`;
 
-    const formattedPrice = `\u20B1 ${numeral(price).format('0,0.00')}`;
-    const description =
-      status === ProductOfferStatus.ACCEPTED
-        ? `Congratulations! Your offer (${formattedPrice}) for ${product.name} has been selected.
-          Seller will send you another notification later for additional details.`
-        : `Sorry! Your offer (${formattedPrice}) for ${product.name} has been rejected`;
-
-    await this.notificationService.createNotification({
-      input: {
-        event: `${status}-product-offer`,
-        description,
-      },
-      from: product.owner,
-      to: user,
-      product: product,
-    });
-  }
+  //   await this.notificationService.createNotification({
+  //     input: {
+  //       event: `${status}-product-offer`,
+  //       description,
+  //     },
+  //     from: product.owner,
+  //     to: user,
+  //     product: product,
+  //   });
+  // }
 }
