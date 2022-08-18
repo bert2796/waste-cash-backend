@@ -4,11 +4,13 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
   ManyToOne,
   OneToMany,
   JoinColumn,
 } from 'typeorm';
 
+import { Address } from '../../address/entities/address.entity';
 import { ProductStatus } from '../../../common/constant';
 import { BidderSetup } from '../../bidderSetup/entities/bidderSetup.entity';
 import { Category } from '../../category/entities/category.entity';
@@ -25,6 +27,7 @@ export const publicFields: string[] = [
   'thumbnail',
   'createdAt',
   'updatedAt',
+  'deletedAt',
 ];
 
 @Entity({ name: 'products' })
@@ -56,6 +59,9 @@ export class Product {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @DeleteDateColumn()
+  deletedAt: Date;
+
   @ManyToOne(() => Category)
   @JoinColumn()
   category: Category;
@@ -81,4 +87,8 @@ export class Product {
   @ManyToOne(() => ProductOffer)
   @JoinColumn()
   offer: ProductOffer;
+
+  @ManyToOne(() => Address)
+  @JoinColumn()
+  address: Address;
 }

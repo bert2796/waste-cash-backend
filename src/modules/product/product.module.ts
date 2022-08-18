@@ -1,6 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AddressModule } from '../address/address.module';
 import { BidderSetupModule } from '../bidderSetup/bidderSetup.module';
 import { CategoryModule } from '../category/category.module';
 import { SpaceModule } from '../space/space.module';
@@ -13,6 +14,7 @@ import { ReviewModule } from '../review/review.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProductRepository]),
+    AddressModule,
     BidderSetupModule,
     CategoryModule,
     ReviewModule,

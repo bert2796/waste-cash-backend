@@ -5,6 +5,7 @@ import { CreateProductInputDto } from '../dtos';
 import { CreateBidderSetupInputDto } from '../../bidderSetup/dtos';
 import { CreateProductOfferInputDto } from '../../productOffer/dtos';
 import { CreateReviewInputDto } from '../../review/dtos';
+import { AddressService } from '../../address/services/address.service';
 import { BidderSetupService } from '../../bidderSetup/services/bidderSetup.service';
 import { CategoryService } from '../../category/services/category.service';
 import { ProductOfferService } from '../../productOffer/services/productOffer.service';
@@ -21,6 +22,7 @@ import { randomString, slugify } from '../../../common/utils';
 @Injectable()
 export class ProductService {
   constructor(
+    private readonly addressService: AddressService,
     private readonly bidderSetupService: BidderSetupService,
     private readonly categoryService: CategoryService,
     private readonly productOfferService: ProductOfferService,
@@ -36,7 +38,7 @@ export class ProductService {
     owner: User;
   }): Promise<Product> {
     const {
-      input: { category: categoryName, description, name, price, status },
+      input: { category: categoryName, description, name, price, status, latitude, location, longitude },
       image,
       owner,
     } = params;
@@ -48,15 +50,24 @@ export class ProductService {
     const slug = `${slugify(name)}-${randomString()}`;
 
     // upload file
-    const fileExtension = image?.mimetype?.split('/')?.[1] || 'jpeg';
-    const uploadedImage = await this.spaceService.uploadFile({
-      bucket: 'wastecash/product_images',
-      file: image,
-      name: `${slug}.${fileExtension}`,
+    // const fileExtension = image?.mimetype?.split('/')?.[1] || 'jpeg';
+    // const uploadedImage = await this.spaceService.uploadFile({
+    //   bucket: 'wastecash/product_images',
+    //   file: image,
+    //   name: `${slug}.${fileExtension}`,
+    // });
+
+    // create address
+    // create address
+    const address = await this.addressService.createAddress({
+      location,
+      latitude,
+      longitude,
     });
 
     // create product
     const product = new Product();
+    product.address = address;
     product.category = category;
     product.owner = owner;
     product.description = description;
@@ -64,7 +75,8 @@ export class ProductService {
     product.price = +price;
     product.slug = slug;
     product.status = status;
-    product.thumbnail = uploadedImage.Location;
+    // product.thumbnail = uploadedImage.Location;
+    product.thumbnail = `${+new Date()}`;
 
     return await this.productRepository.save(product);
   }
@@ -87,6 +99,10 @@ export class ProductService {
     product.review = review || product.review;
 
     return await this.productRepository.save(product);
+  }
+
+  async deleteProduct(productId: number): Promise<void> {
+    await this.productRepository.softDelete(productId);
   }
 
   async getProducts(filter?: Partial<Product>): Promise<Product[]> {

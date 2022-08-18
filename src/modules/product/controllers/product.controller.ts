@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   HttpCode,
   HttpStatus,
   Param,
@@ -65,6 +66,12 @@ export class ProductController {
   @HttpCode(HttpStatus.OK)
   async getProduct(@Param('id') id: string): Promise<Product> {
     return await this.productService.getProduct(+id);
+  }
+
+  @Delete('/:id')
+  @HttpCode(HttpStatus.OK)
+  async deleteProduct(@Param('id') id: string): Promise<void> {
+    return await this.productService.deleteProduct(+id);
   }
 
   // Product Offers API

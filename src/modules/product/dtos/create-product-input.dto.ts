@@ -1,8 +1,9 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 import { ProductStatus } from '../../../common/constant';
+import { CreateAddressInputDto } from '../../address/dtos';
 
-export class CreateProductInputDto {
+export class CreateProductInputDto extends CreateAddressInputDto {
   @IsNotEmpty()
   @IsString()
   category: string;
