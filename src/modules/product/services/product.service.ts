@@ -50,14 +50,13 @@ export class ProductService {
     const slug = `${slugify(name)}-${randomString()}`;
 
     // upload file
-    // const fileExtension = image?.mimetype?.split('/')?.[1] || 'jpeg';
-    // const uploadedImage = await this.spaceService.uploadFile({
-    //   bucket: 'wastecash/product_images',
-    //   file: image,
-    //   name: `${slug}.${fileExtension}`,
-    // });
+    const fileExtension = image?.mimetype?.split('/')?.[1] || 'jpeg';
+    const uploadedImage = await this.spaceService.uploadFile({
+      bucket: 'wastecash/product_images',
+      file: image,
+      name: `${slug}.${fileExtension}`,
+    });
 
-    // create address
     // create address
     const address = await this.addressService.createAddress({
       location,
@@ -75,7 +74,7 @@ export class ProductService {
     product.price = +price;
     product.slug = slug;
     product.status = status;
-    // product.thumbnail = uploadedImage.Location;
+    product.thumbnail = uploadedImage.Location;
     product.thumbnail = `${+new Date()}`;
 
     return await this.productRepository.save(product);
