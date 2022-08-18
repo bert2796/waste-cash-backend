@@ -75,7 +75,7 @@ export class ProductService {
     product.slug = slug;
     product.status = status;
     product.thumbnail = uploadedImage.Location;
-    product.thumbnail = `${+new Date()}`;
+    // product.thumbnail = `${+new Date()}`;
 
     return await this.productRepository.save(product);
   }
