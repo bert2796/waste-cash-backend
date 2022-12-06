@@ -88,4 +88,10 @@ export class ProductOfferService {
 
     return productOffer;
   }
+
+  async getMonthlySales(
+    productIds: number[]
+  ): Promise<{ year: number; month: number; price: number; productId: number; status: string }[]> {
+    return await this.productOfferRepository.getMonthlySales(productIds);
+  }
 }

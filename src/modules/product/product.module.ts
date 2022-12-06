@@ -5,6 +5,7 @@ import { AddressModule } from '../address/address.module';
 import { BidderSetupModule } from '../bidderSetup/bidderSetup.module';
 import { CategoryModule } from '../category/category.module';
 import { SpaceModule } from '../space/space.module';
+import { ProductClickModule } from '../productClick/productClick.module';
 import { ProductOfferModule } from '../productOffer/productOffer.module';
 import { ProductRepository } from './repositories/product.repository';
 import { ProductController } from './controllers/product.controller';
@@ -20,6 +21,7 @@ import { ReviewModule } from '../review/review.module';
     ReviewModule,
     SpaceModule,
     forwardRef(() => ProductOfferModule),
+    forwardRef(() => ProductClickModule),
   ],
   controllers: [ProductController],
   providers: [ProductService],

@@ -19,6 +19,8 @@ import { ReviewModule } from './review/review.module';
 import { ShopModule } from './shop/shop.module';
 import { SpaceModule } from './space/space.module';
 import { UserModule } from './user/user.module';
+import { ReportModule } from './report/report.module';
+import { ProductClickModule } from './productClick/productClick.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { UserModule } from './user/user.module';
     NotificationModule,
     ProductModule,
     ProductOfferModule,
+    ProductClickModule,
+    ReportModule,
     ReviewModule,
     ShopModule,
     SpaceModule,

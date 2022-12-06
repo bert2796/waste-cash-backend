@@ -24,6 +24,7 @@ import { CreateReviewInputDto } from '../../review/dtos';
 import { BidderSetup } from '../../bidderSetup/entities/bidderSetup.entity';
 import { Review } from '../../review/entities/review.entity';
 import { User } from '../../user/entities/user.entity';
+import { ProductClick } from '../../productClick/entities/productClick.entity';
 import { ProductOffer } from '../../productOffer/entities/productOffer.entity';
 import { Product } from '../entities/product.entity';
 import { ProductService } from '../services/product.service';
@@ -154,5 +155,13 @@ export class ProductController {
     const { user } = req;
 
     return await this.productService.createReview({ productId: +id, input, user });
+  }
+
+  // Product Click API
+  @Post('/:id/clicks')
+  @HttpCode(HttpStatus.CREATED)
+  @Authorize([UserRoles.BUYER])
+  async createProductClick(@Param('id') id: string): Promise<ProductClick> {
+    return await this.productService.createProductClick(+id);
   }
 }

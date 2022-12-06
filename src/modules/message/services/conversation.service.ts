@@ -104,9 +104,6 @@ export class ConversationService {
       throw new BadRequestException('Sender does not exist.');
     }
 
-    console.log('-------------------------------');
-    console.log(sender);
-
     const messagesToUpdate = conversation.messages.filter((message) => message.sender.id === sender);
     if (!messagesToUpdate.length) {
       throw new BadRequestException('No messages.');

@@ -9,6 +9,7 @@ import { AddressService } from '../../address/services/address.service';
 import { BidderSetupService } from '../../bidderSetup/services/bidderSetup.service';
 import { CategoryService } from '../../category/services/category.service';
 import { ProductOfferService } from '../../productOffer/services/productOffer.service';
+import { ProductClickService } from '../../productClick/services/productClick.service';
 import { ReviewService } from '../../review/services/review.service';
 import { SpaceService } from '../../space/services/space.service';
 import { BidderSetup } from '../../bidderSetup/entities/bidderSetup.entity';
@@ -16,6 +17,7 @@ import { ProductOffer } from '../../productOffer/entities/productOffer.entity';
 import { Review } from '../../review/entities/review.entity';
 import { User } from '../../user/entities/user.entity';
 import { Product } from '../entities/product.entity';
+import { ProductClick } from '../../productClick/entities/productClick.entity';
 import { ProductRepository } from '../repositories/product.repository';
 import { randomString, slugify } from '../../../common/utils';
 
@@ -26,6 +28,7 @@ export class ProductService {
     private readonly bidderSetupService: BidderSetupService,
     private readonly categoryService: CategoryService,
     private readonly productOfferService: ProductOfferService,
+    private readonly productClickService: ProductClickService,
     private readonly reviewService: ReviewService,
     private readonly spaceService: SpaceService,
     private readonly productRepository: ProductRepository
@@ -242,5 +245,15 @@ export class ProductService {
     });
 
     return review;
+  }
+
+  async getProductsByUser(userId: number): Promise<Product[]> {
+    return await this.productRepository.find({ where: { owner: userId } });
+  }
+
+  async createProductClick(productId: number): Promise<ProductClick> {
+    const product = await this.getProduct(productId);
+
+    return await this.productClickService.createProductClick({ product });
   }
 }
