@@ -6,7 +6,7 @@ import { ProductClick } from '../entities/productClick.entity';
 export class ProductClickRepository extends Repository<ProductClick> {
   async getMonthlyClicks(
     productIds: number[]
-  ): Promise<{ year: number; month: number; price: number; productId: number; status: string }[]> {
+  ): Promise<{ year: number; month: number; counter: number; productId: number; status: string }[]> {
     return this.createQueryBuilder('productClicks')
       .select([
         'YEAR(productClicks.createdAt) as year',

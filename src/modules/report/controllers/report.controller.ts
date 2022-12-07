@@ -12,9 +12,7 @@ export class ReportController {
   @Get('/monthly-sales')
   @HttpCode(HttpStatus.OK)
   @Authorize([UserRoles.SELLER])
-  async getMonthlySales(
-    @Req() req: { user: User }
-  ): Promise<{ year: number; month: number; price: number; productId: number; status: string }[]> {
+  async getMonthlySales(@Req() req: { user: User }): Promise<{ [key: string]: { total: number } }> {
     const { user } = req;
 
     return await this.reportService.getMonthlySales(user.id);
@@ -23,11 +21,9 @@ export class ReportController {
   @Get('/monthly-clicks')
   @HttpCode(HttpStatus.OK)
   @Authorize([UserRoles.SELLER])
-  async getMonthlyClicks(
-    @Req() req: { user: User }
-  ): Promise<{ year: number; month: number; price: number; productId: number; status: string }[]> {
+  async getMonthlyClicks(@Req() req: { user: User }): Promise<{ [key: string]: { total: number } }> {
     const { user } = req;
 
-    return await this.reportService.getMonthlyClcks(user.id);
+    return await this.reportService.getMonthlyClicks(user.id);
   }
 }

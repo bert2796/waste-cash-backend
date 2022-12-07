@@ -16,5 +16,5 @@
     "node_modules": true,
     "**/node_modules": true
   },
-  "cSpell.words": ["nestjs", "fastify"]
+  "cSpell.words": ["fastify", "Monthlysale", "nestjs"]
 }

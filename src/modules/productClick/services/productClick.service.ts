@@ -11,9 +11,10 @@ export class ProductClickService {
   async createProductClick(params: { product: Product }): Promise<ProductClick> {
     const { product } = params;
 
-    let productClick = await this.productClickRepository.findOne(product.id);
+    let productClick = await this.productClickRepository.findOne({ where: { product: params.product.id } });
+
     if (productClick) {
-      productClick.counter = productClick.counter + 1;
+      productClick.counter = parseInt(`${productClick.counter}`) + 1;
     } else {
       productClick = new ProductClick();
       productClick.product = product;
@@ -38,7 +39,7 @@ export class ProductClickService {
 
   async getMonthlyClicks(
     productIds: number[]
-  ): Promise<{ year: number; month: number; price: number; productId: number; status: string }[]> {
+  ): Promise<{ year: number; month: number; counter: number; productId: number; status: string }[]> {
     return await this.productClickRepository.getMonthlyClicks(productIds);
   }
 }
