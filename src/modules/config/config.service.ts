@@ -61,6 +61,9 @@ export class ConfigService {
       database: this.get('MYSQL_DATABASE') as string,
       username: this.get('MYSQL_USERNAME') as string,
       password: this.get('MYSQL_PASSWORD') as string,
+      ssl: {
+        rejectUnauthorized: true,
+      },
 
       entities: ['**/*.entity{.ts,.js}'],
       migrations: ['src/database/migrations/*.ts'],
